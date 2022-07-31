@@ -7,7 +7,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
 class TiketRequest extends FormRequest
-{ 
+{
     public function authorize()
     {
         return true;
@@ -16,11 +16,10 @@ class TiketRequest extends FormRequest
     public function rules()
     {
         return [
-            'no_tiket' =>'required',
-            'id_mahasiswa' =>'required|integer',
-            'id_staff' =>'required|integer',
-            'keterangan' =>'required|max:255',
-            'verifikasi' =>'required|max:255',
+            'no_tiket' => 'required',
+            'id_mahasiswa' => 'required|integer',
+            'id_staff' => 'required|integer',
+            'keterangan' => 'required|min:2',
         ];
     }
     protected function failedValidation(Validator $validator)
