@@ -10,4 +10,6 @@ Route::get('/', function () {
 Route::prefix('staff')->controller(StaffController::class)->group(function () {
     Route::get('/', 'getAll')->name('staff.index');
     Route::post('/', 'createStaff');
+    Route::get('/{id}', 'getStaff');
+    Route::patch('/{id}', 'updateStaff');
 });

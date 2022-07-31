@@ -63,7 +63,7 @@
                                     <div class="form-group row">
                                         <label for="nama" class="col-sm-3 col-form-label">NAMA</label>
                                         <div class="col-sm-9">
-                                            <input name="nama" type="text" class="form-control" id="nama"
+                                            <input name="nama" type="text" class="form-control"
                                                 placeholder="Nama Lengkap">
                                             <small id="nama-alert" class="mini-alert"></small>
                                         </div>
@@ -71,7 +71,7 @@
                                     <div class="form-group row">
                                         <label for="jabatan" class="col-sm-3 col-form-label">JABATAN</label>
                                         <div class="col-sm-9">
-                                            <select name="jabatan" class="form-control" id="jabatan">
+                                            <select name="jabatan" class="form-control">
                                                 <option selected disabled>--Pilih--</option>
                                                 <option value="kepala bidang">Kepala Bidang</option>
                                                 <option value="staff">Staff</option>
@@ -139,6 +139,87 @@
                             $(`#${i}-alert`).html(value);
                         });
                     }
+                }
+            });
+        });
+
+        $(document).on('click', '#btn-ubah', function() {
+            let _id = $(this).data('id');
+            let url = `{{ config('app.url') }}/staff/${_id}`;
+
+            $('.modal-title').html('Ubah Data');
+            $.get(url, function(result) {
+                $('#form-ubah').html(`
+                    <div class="card-pad">
+                        <div class="form-group row">
+                            <label for="nama" class="col-sm-3 col-form-label">NAMA</label>
+                            <div class="col-sm-9">
+                                <input name="nama" type="text" class="form-control" id="nama"
+                                    placeholder="Nama Lengkap" value="${result.data.nama}">
+                                <small id="nama-alert2" class="mini-alert"></small>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="jabatan" class="col-sm-3 col-form-label">JABATAN</label>
+                            <div class="col-sm-9">
+                                <select name="jabatan" class="form-control" id="jabatan">
+                                    <option selected disabled>--Pilih--</option>
+                                    <option value="kepala bidang">Kepala Bidang</option>
+                                    <option value="staff">Staff</option>
+                                </select>
+                                <small id="jabatan-alert2" class="mini-alert"></small>
+                            </div>
+                        </div>
+                    </div>
+                `);
+                $('.modal-footer').html(`
+                    <button data-id="${result.data.id}" id="btn-kirim" type="button" class="btn btn-primary">Kirim</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                `);
+                $('#jabatan').val(result.data.jabatan);
+                $('#myModal').modal('show');
+            });
+        });
+
+        $(document).on('click', '#btn-kirim', function() {
+            let _id = $(this).data('id');
+            let url = `{{ config('app.url') }}/staff/${_id}`;
+            let data = $('#form-ubah').serialize();
+            Swal.showLoading();
+            $('#myModal').modal('hide');
+            $.ajax({
+                url: url,
+                method: "PATCH",
+                data: data,
+                success: function(result) {
+                    Swal.hideLoading();
+                    Swal.fire({
+                        title: result.response.title,
+                        text: result.response.message,
+                        icon: result.response.icon,
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Oke'
+                    }).then((result) => {
+                        location.reload();
+                    });
+                },
+                error: function(result) {
+                    Swal.hideLoading();
+                    let data = result.responseJSON
+                    let errorRes = data.errors
+                    Swal.fire({
+                        icon: data.response.icon,
+                        title: data.response.title,
+                        text: data.response.message,
+                    }).then(() => {
+                        $('#myModal').modal('show');
+                        if (errorRes.length >= 1) {
+                            $('.miniAlert').html('');
+                            $.each(errorRes.data, function(i, value) {
+                                $(`#${i}-alert2`).html(value);
+                            });
+                        }
+                    });
                 }
             });
         });
