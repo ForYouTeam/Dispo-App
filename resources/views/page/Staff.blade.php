@@ -223,5 +223,49 @@
                 }
             });
         });
+
+        $(document).on('click', '#btn-hapus', function() {
+            let _id = $(this).data('id');
+            let url = `{{ config('app.url') }}/staff/${_id}`;
+            Swal.fire({
+                title: 'Anda Yakin?',
+                text: "Data ini mungkin terhubung ke tabel yang lain!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                cancelButtonText: 'Batal',
+                confirmButtonText: 'Hapus'
+            }).then((res) => {
+                if (res.isConfirmed) {
+                    Swal.showLoading();
+                    $.ajax({
+                        url: url,
+                        type: 'delete',
+                        success: function(result) {
+                            Swal.hideLoading();
+                            Swal.fire({
+                                title: result.response.title,
+                                text: result.response.message,
+                                icon: result.response.icon,
+                                cancelButtonColor: '#d33',
+                                confirmButtonText: 'Oke'
+                            }).then((result) => {
+                                location.reload();
+                            });
+                        },
+                        error: function(result) {
+                            Swal.hideLoading();
+                            let data = result.responseJSON
+                            Swal.fire({
+                                icon: data.response.icon,
+                                title: data.response.title,
+                                text: data.response.message,
+                            });
+                        }
+                    });
+                }
+            })
+        });
     </script>
 @endsection

@@ -110,4 +110,42 @@ class StaffController extends Controller
 
         return response()->json($response, $response['code']);
     }
+
+    public function deleteStaff($id)
+    {
+        try {
+            $staff = StaffModel::whereId($id);
+            if ($staff->first()) {
+                $response = array(
+                    'data' => $staff->delete(),
+                    'response' => array(
+                        'icon' => 'success',
+                        'title' => 'Tersimpan',
+                        'message' => 'Data berhasil disimpan',
+                    ),
+                    'code' => 201
+                );
+            } else {
+                $response = array(
+                    'response' => array(
+                        'icon' => 'warning',
+                        'title' => 'Not found',
+                        'message' => 'Data tidak ditemukan',
+                    ),
+                    'code' => 404
+                );
+            }
+        } catch (\Throwable $th) {
+            $response = array(
+                'response' => array(
+                    'icon' => 'error',
+                    'title' => 'Gagal',
+                    'message' => $th->getMessage(),
+                ),
+                'code' => 500
+            );
+        }
+
+        return response()->json($response, $response['code']);
+    }
 }

@@ -12,4 +12,5 @@ Route::prefix('staff')->controller(StaffController::class)->group(function () {
     Route::post('/', 'createStaff');
     Route::get('/{id}', 'getStaff');
     Route::patch('/{id}', 'updateStaff');
+    Route::delete('/{id}', 'deleteStaff');
 });
